@@ -14,7 +14,8 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(SettingsPlugin)
         .add_plugins(PlayerPlugin)
-        .add_systems(Startup, setup)
+        .add_plugins(BlocksPlugin)
+        .add_systems(Startup, setup.after(setup_block_materials))
         .add_systems(Update, exit_on_esc)
         .run();
 }
@@ -22,18 +23,19 @@ fn main() {
 fn setup(
     mut commands: Commands,
     meshes: ResMut<Assets<Mesh>>,
-    materials: ResMut<Assets<StandardMaterial>>,
+    block_materials: Res<BlockMaterials>,
     settings: Res<Settings>,
 ) {
     // blocks
-    generate_chunk(&mut commands, meshes, materials, settings);
+    generate_chunk(&mut commands, meshes, block_materials, settings);
 
-    // light
+    // Better lighting
     commands.spawn((
-        PointLight {
+        DirectionalLight {
+            illuminance: 10000.0,
             shadows_enabled: true,
             ..default()
         },
-        Transform::from_xyz(4.0, 8.0, 4.0),
+        Transform::from_xyz(10.0, 8.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 }
