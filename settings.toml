@@ -1,0 +1,9 @@
+[player]
+speed = 5.0
+sensitivity = 0.01
+jump_force = 8.0
+gravity = 20.0
+
+[world]
+block_size = 1.0
+chunk_size = 10
