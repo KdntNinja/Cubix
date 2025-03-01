@@ -1,66 +1,6 @@
-use crate::settings::Settings;
+use super::components::{Block, BlockHighlight};
+use super::materials::BlockMaterials;
 use bevy::prelude::*;
-
-#[derive(Component)]
-pub struct Block;
-
-#[derive(Component)]
-pub struct BlockHighlight;
-
-#[derive(Resource)]
-pub struct BlockMaterials {
-    pub normal: Handle<StandardMaterial>,
-    pub highlighted: Handle<StandardMaterial>,
-}
-
-pub struct BlocksPlugin;
-
-impl Plugin for BlocksPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_block_materials)
-            .add_systems(Update, highlight_hovered_block);
-    }
-}
-
-pub fn setup_block_materials(
-    mut commands: Commands,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-    // Create materials for blocks
-    let normal_material = materials.add(Color::srgb_u8(124, 144, 255));
-    let highlighted_material = materials.add(Color::WHITE);
-
-    commands.insert_resource(BlockMaterials {
-        normal: normal_material,
-        highlighted: highlighted_material,
-    });
-}
-
-pub fn generate_chunk(
-    commands: &mut Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    block_materials: Res<BlockMaterials>,
-    settings: Res<Settings>,
-) {
-    let block_size = settings.world.block_size;
-    let chunk_size = settings.world.chunk_size;
-    let grid_offset = 0.02; // Small gap between blocks for grid effect
-
-    for z in 0..chunk_size {
-        for x in 0..chunk_size {
-            // Create slightly smaller blocks to create visual grid lines
-            let visual_size = block_size - grid_offset;
-
-            commands.spawn((
-                Block,
-                Mesh3d(meshes.add(Cuboid::new(visual_size, visual_size, visual_size))),
-                MeshMaterial3d(block_materials.normal.clone()),
-                Transform::from_xyz(x as f32 * block_size, 0.0, z as f32 * block_size),
-                Visibility::Visible,
-            ));
-        }
-    }
-}
 
 pub fn highlight_hovered_block(
     mut commands: Commands,

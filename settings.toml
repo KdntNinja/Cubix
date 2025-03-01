@@ -1,6 +1,6 @@
 [player]
 speed = 5.0
-sensitivity = 0.01
+sensitivity = 0.001
 jump_force = 8.0
 gravity = 20.0
 
