@@ -3,7 +3,6 @@ mod loading;
 
 // Re-export everything
 pub use components::*;
-pub use loading::*;
 
 use bevy::prelude::*;
 

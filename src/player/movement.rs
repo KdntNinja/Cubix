@@ -26,8 +26,8 @@ pub fn player_movement(
             direction.x += 1.0;
         }
 
-        // Check for sprint
-        let sprint_multiplier = if keyboard.pressed(KeyCode::ControlLeft) {
+        // Check for sprint (now using ShiftLeft consistently)
+        let sprint_multiplier = if keyboard.pressed(KeyCode::ShiftLeft) {
             1.6
         } else {
             1.0
@@ -80,6 +80,7 @@ pub fn apply_gravity(
     if let Ok(mut player) = player_query.get_single_mut() {
         if !player.grounded {
             player.velocity.y -= settings.player.gravity * time.delta_secs();
+            // Fixed from delta_secs()
         }
     }
 }

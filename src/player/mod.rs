@@ -1,6 +1,6 @@
 mod camera;
 mod collision;
-mod components;
+pub(crate) mod components;
 mod movement;
 mod setup;
 
