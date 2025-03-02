@@ -47,12 +47,14 @@ pub fn update_debug_info(
     debug_state: Res<DebugState>,
     settings: Res<Settings>,
     player_query: Query<(&Transform, &Player)>,
-    mut container_query: Query<&mut Visibility, With<DebugContainer>>,
-    mut player_info_query: Query<&mut Text, With<PlayerInfoText>>,
-    mut world_info_query: Query<&mut Text, With<WorldInfoText>>,
+    mut queries: ParamSet<(
+        Query<&mut Visibility, With<DebugContainer>>,
+        Query<&mut Text, With<PlayerInfoText>>,
+        Query<&mut Text, With<WorldInfoText>>,
+    )>,
 ) {
     // Update main container visibility
-    if let Ok(mut visibility) = container_query.get_single_mut() {
+    if let Ok(mut visibility) = queries.p0().get_single_mut() {
         *visibility = if debug_state.show_debug {
             Visibility::Visible
         } else {
@@ -63,15 +65,15 @@ pub fn update_debug_info(
     // Only update text content if debug mode is active
     if debug_state.show_debug {
         // Update player info in Minecraft style
-        if let Ok(mut text) = player_info_query.get_single_mut() {
+        if let Ok(mut text) = queries.p1().get_single_mut() {
             if let Ok((transform, player)) = player_query.get_single() {
                 *text = Text::from(format!(
                     "XYZ: {:.2}, {:.2}, {:.2}\n\
-                         Block: {}, {}, {}\n\
-                         Chunk: {}, {}\n\
-                         Facing: {}\n\
-                         Speed: {:.2} m/s\n\
-                         Grounded: {}",
+                     Block: {}, {}, {}\n\
+                     Chunk: {}, {}\n\
+                     Facing: {}\n\
+                     Speed: {:.2} m/s\n\
+                     Grounded: {}",
                     transform.translation.x,
                     transform.translation.y,
                     transform.translation.z,
@@ -88,12 +90,12 @@ pub fn update_debug_info(
         }
 
         // Update world info using memory values from debug_state
-        if let Ok(mut text) = world_info_query.get_single_mut() {
+        if let Ok(mut text) = queries.p2().get_single_mut() {
             *text = Text::from(format!(
                 "Block Size: {:.1}\n\
-                     Chunk Size: {}\n\
-                     Gravity: {:.1}\n\
-                     Memory: {:.1}% ({:.1} MB / {:.0} MB)",
+                 Chunk Size: {}\n\
+                 Gravity: {:.1}\n\
+                 Memory: {:.1}% ({:.1} MB / {:.0} MB)",
                 settings.world.block_size,
                 settings.world.chunk_size,
                 settings.player.gravity,
