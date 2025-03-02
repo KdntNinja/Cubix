@@ -1,4 +1,4 @@
-use super::components::{PlayerSettings, Settings, WindowSettings, WorldSettings};
+use super::components::Settings;
 use config::ConfigError;
 use log::info;
 
