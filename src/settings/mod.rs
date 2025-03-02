@@ -1,5 +1,5 @@
 mod components;
-mod loading;
+mod settings;
 
 // Re-export everything
 pub use components::*;

@@ -3,7 +3,7 @@ use crate::settings::Settings;
 use bevy::prelude::*;
 
 pub fn setup_cursor(mut windows: Query<&mut Window>) {
-    if let Ok(mut window) = windows.get_single_mut() {
+    for mut window in windows.iter_mut() {
         window.cursor_options.grab_mode = bevy::window::CursorGrabMode::Locked;
         window.cursor_options.visible = false;
     }

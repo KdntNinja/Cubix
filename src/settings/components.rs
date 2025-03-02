@@ -16,9 +16,15 @@ pub struct WorldSettings {
 }
 
 #[derive(Debug, Deserialize, Serialize, Resource)]
+pub struct WindowSettings {
+    pub fullscreen: bool,
+}
+
+#[derive(Debug, Deserialize, Serialize, Resource)]
 pub struct Settings {
     pub player: PlayerSettings,
     pub world: WorldSettings,
+    pub window: WindowSettings,
 }
 
 impl Default for Settings {
@@ -26,14 +32,15 @@ impl Default for Settings {
         Self {
             player: PlayerSettings {
                 speed: 5.0,
-                sensitivity: 0.1,
+                sensitivity: 0.001,
                 jump_force: 8.0,
                 gravity: 20.0,
             },
             world: WorldSettings {
                 block_size: 1.0,
-                chunk_size: 10,
+                chunk_size: 16,
             },
+            window: WindowSettings { fullscreen: true },
         }
     }
 }
