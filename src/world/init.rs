@@ -48,11 +48,11 @@ impl App {
         let world = World::new(mesh);
 
         let projection: Matrix4<f32> =
-            perspective(Deg(45.0), width as f32 / height as f32, 0.1, 100.0);
+            perspective(Deg(60.0), width as f32 / height as f32, 0.1, 100.0);
         let view: Matrix4<f32> = Matrix4::look_at_rh(
-            Point3::new(0.0, 0.0, 5.0),
-            Point3::new(0.0, 0.0, 0.0),
-            Vector3::new(0.0, 1.0, 0.0),
+            Point3::new(25.0, 25.0, 25.0), // Position camera further back diagonally
+            Point3::new(8.0, 8.0, 8.0),    // Look at center of the chunk
+            Vector3::new(0.0, 1.0, 0.0),   // Keep same up vector
         );
 
         // Change the App initialization to:

@@ -10,7 +10,7 @@ mod rendering;
 mod world;
 
 use events::process_events;
-use world::{cube_render::draw_cubes, init::App};
+use world::init::App;
 
 fn main() {
     let mut app = App::new(600, 480, "Multiple Cubes");
@@ -42,8 +42,8 @@ fn main() {
                 gl::GetUniformLocation(app.shader.id, b"view\0".as_ptr() as *const GLchar);
             gl::UniformMatrix4fv(view_location, 1, gl::FALSE as GLboolean, app.view.as_ptr());
 
-            //app.world.draw(&app.shader, app.glfw.get_time() as f32);
-            draw_cubes(&app.mesh, &app.shader, app.glfw.get_time() as f32);
+            app.world.draw(&app.shader, app.glfw.get_time() as f32);
+            //draw_cubes(&app.mesh, &app.shader, app.glfw.get_time() as f32);
 
             app.window.swap_buffers();
             app.glfw.poll_events();

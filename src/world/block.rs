@@ -8,6 +8,18 @@ impl Block {
         Block { id }
     }
 
+    pub fn get_color(&self) -> [f32; 4] {
+        match self.id {
+            0 => [0.0, 0.0, 0.0, 0.0], // Air/empty (transparent)
+            1 => [0.6, 0.3, 0.0, 1.0], // Dirt/soil (brown)
+            2 => [0.0, 0.7, 0.0, 1.0], // Grass (green)
+            3 => [0.5, 0.5, 0.5, 1.0], // Stone (gray)
+            4 => [0.9, 0.9, 0.9, 1.0], // Snow (white)
+            5 => [0.0, 0.0, 0.8, 1.0], // Water (blue)
+            _ => [1.0, 0.0, 1.0, 1.0], // Unknown (magenta)
+        }
+    }
+
     pub fn get_cube_vertices() -> [f32; 108] {
         [
             // Back face

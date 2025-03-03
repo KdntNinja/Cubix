@@ -2,6 +2,7 @@ extern crate gl;
 
 use crate::rendering::mesh::Mesh;
 use crate::rendering::shader::Shader;
+use crate::world::block::Block;
 use crate::world::generation::generate_chunk;
 use cgmath::Matrix;
 use cgmath::{Matrix4, Vector3};
@@ -22,11 +23,11 @@ impl World {
 
     pub fn draw(&self, shader: &Shader, _time: f32) {
         unsafe {
-            // Example: Render the entire chunk
             for x in 0..16 {
                 for y in 0..16 {
                     for z in 0..16 {
-                        if self.chunk_data[x][y][z] != 0 {
+                        let block_id = self.chunk_data[x][y][z];
+                        if block_id != 0 {
                             // Model matrix
                             let model_location = gl::GetUniformLocation(
                                 shader.id,
@@ -42,12 +43,14 @@ impl World {
                                 model.as_ptr(),
                             );
 
-                            // Color uniform (example: green)
+                            // Apply color based on block ID
+                            let block = Block::new(block_id);
+                            let color = block.get_color();
                             let color_location = gl::GetUniformLocation(
                                 shader.id,
                                 b"color\0".as_ptr() as *const GLchar,
                             );
-                            gl::Uniform4f(color_location, 0.0, 1.0, 0.0, 1.0);
+                            gl::Uniform4f(color_location, color[0], color[1], color[2], color[3]);
 
                             // Draw the cube
                             self.mesh.draw();
