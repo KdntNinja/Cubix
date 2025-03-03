@@ -1,12 +1,14 @@
+// In src/world/init.rs
 extern crate gl;
 extern crate glfw;
 
-use cgmath::{Deg, Matrix4, Point3, Vector3, perspective};
-use glfw::{Context, Glfw, GlfwReceiver, PWindow, WindowEvent};
-
+use crate::config::Config;
+use crate::player::camera::Camera;
 use crate::rendering::mesh::Mesh;
 use crate::rendering::shader::Shader;
 use crate::world::{block::Block, world::World};
+use cgmath::{Deg, Matrix4, Point3, perspective};
+use glfw::{Context, CursorMode, Glfw, GlfwReceiver, PWindow, WindowEvent};
 
 pub struct App {
     pub glfw: Glfw,
@@ -16,10 +18,11 @@ pub struct App {
     pub world: World,
     pub projection: Matrix4<f32>,
     pub view: Matrix4<f32>,
+    pub camera: Camera,
 }
 
 impl App {
-    pub fn new(width: u32, height: u32, title: &str) -> Self {
+    pub fn new(config: &Config) -> Self {
         let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to initialize GLFW");
 
         glfw.window_hint(glfw::WindowHint::ContextVersion(3, 3));
@@ -27,13 +30,42 @@ impl App {
             glfw::OpenGlProfileHint::Core,
         ));
 
+        // Create initial window
         let (mut window, events) = glfw
-            .create_window(width, height, title, glfw::WindowMode::Windowed)
+            .create_window(
+                config.window.width,
+                config.window.height,
+                &config.window.title,
+                glfw::WindowMode::Windowed,
+            )
             .expect("Failed to create GLFW window.");
+
+        // Apply fullscreen if configured
+        if config.window.fullscreen {
+            glfw.with_primary_monitor(|_, m| {
+                if let Some(monitor) = m {
+                    if let Some(video_mode) = monitor.get_video_mode() {
+                        window.set_monitor(
+                            glfw::WindowMode::FullScreen(monitor),
+                            0,
+                            0,
+                            video_mode.width,
+                            video_mode.height,
+                            Some(video_mode.refresh_rate),
+                        );
+                    }
+                }
+            });
+        }
 
         window.make_current();
         window.set_key_polling(true);
         window.set_framebuffer_size_polling(true);
+        window.set_cursor_pos_polling(true);
+
+        if config.controls.cursor_locked {
+            window.set_cursor_mode(CursorMode::Disabled);
+        }
 
         gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
@@ -45,13 +77,22 @@ impl App {
         let mesh = Mesh::new(&cube_vertices);
         let world = World::new(mesh);
 
-        let projection: Matrix4<f32> =
-            perspective(Deg(60.0), width as f32 / height as f32, 0.1, 100.0);
-        let view: Matrix4<f32> = Matrix4::look_at_rh(
-            Point3::new(25.0, 25.0, 25.0), // Position camera further back diagonally
-            Point3::new(8.0, 8.0, 8.0),    // Look at center of the chunk
-            Vector3::new(0.0, 1.0, 0.0),   // Keep same up vector
+        // Get the current framebuffer size for projection matrix
+        let (width, height) = window.get_framebuffer_size();
+        let projection: Matrix4<f32> = perspective(
+            Deg(config.camera.fov),
+            width as f32 / height as f32,
+            config.camera.near_plane,
+            config.camera.far_plane,
         );
+
+        // Initialize camera at config position
+        let camera = Camera::new(Point3::new(
+            config.camera.position_x,
+            config.camera.position_y,
+            config.camera.position_z,
+        ));
+        let view = camera.get_view_matrix();
 
         App {
             glfw,
@@ -61,6 +102,10 @@ impl App {
             world,
             projection,
             view,
+            camera,
         }
+    }
+    pub fn update_view_matrix(&mut self) {
+        self.view = self.camera.get_view_matrix();
     }
 }

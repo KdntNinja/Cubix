@@ -1,0 +1,23 @@
+[window]
+width = 1280
+height = 720
+title = "Minecraft Clone Rust"
+fullscreen = true
+vsync = true
+
+[camera]
+sensitivity = 0.10000000149011612
+fov = 70.0
+near_plane = 0.10000000149011612
+far_plane = 1000.0
+position_x = 8.0
+position_y = 8.0
+position_z = 8.0
+
+[controls]
+cursor_locked = true
+
+[physics]
+gravity = 0.014999999664723873
+jump_force = 0.20000000298023224
+player_height = 1.7999999523162842
