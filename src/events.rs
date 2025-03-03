@@ -149,11 +149,17 @@ pub fn process_events(
                     mouse_state.last_x = x_pos;
                     mouse_state.last_y = y_pos;
                     mouse_state.first_mouse = false;
+                    continue; // Skip this first frame to avoid large jumps
                 }
 
-                let x_offset = x_pos - mouse_state.last_x;
-                // Reversed since y-coordinates go from bottom to top
-                let y_offset = mouse_state.last_y - y_pos;
+                // Limit the maximum movement per frame to avoid huge jumps
+                let mut x_offset = x_pos - mouse_state.last_x;
+                let mut y_offset = mouse_state.last_y - y_pos;
+
+                // Constrain maximum movement per frame
+                const MAX_MOVEMENT: f32 = 100.0;
+                x_offset = x_offset.max(-MAX_MOVEMENT).min(MAX_MOVEMENT);
+                y_offset = y_offset.max(-MAX_MOVEMENT).min(MAX_MOVEMENT);
 
                 mouse_state.last_x = x_pos;
                 mouse_state.last_y = y_pos;
@@ -164,9 +170,7 @@ pub fn process_events(
                 if !config.controls.cursor_locked {
                     continue;
                 }
-
-                // Will implement block placement/breaking here
-                // Left click for block breaking, right click for block placing
+                // Implementation will come later
             }
             _ => {}
         }

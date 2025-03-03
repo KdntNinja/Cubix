@@ -61,11 +61,13 @@ impl PlayerInput {
         // Update timers
         self.last_jump_time += delta_time;
 
-        // Set movement speed
+        // Set movement speed - higher speed for fly mode
         let base_speed = if self.is_key_pressed(Key::LeftControl) {
-            10.0 // Sprint speed
+            15.0 // Sprint speed
+        } else if self.fly_mode {
+            8.0 // Higher base speed for fly mode
         } else {
-            5.0 // Normal speed
+            5.0 // Normal walking speed
         };
 
         // Calculate frame-dependent speed
@@ -156,7 +158,13 @@ impl PlayerInput {
         *self.key_states.get(&key).unwrap_or(&false)
     }
 
+    // In move_camera method, check magnitude before applying movement
     fn move_camera(&self, camera: &mut Camera, offset: Vector3<f32>) {
+        // Check for NaN or infinite values in the offset
+        if !offset.x.is_finite() || !offset.y.is_finite() || !offset.z.is_finite() {
+            return; // Reject invalid movements
+        }
+
         // In non-fly mode, only move horizontally
         if !self.fly_mode {
             camera.position.x += offset.x;
