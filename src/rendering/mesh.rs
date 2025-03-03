@@ -3,6 +3,7 @@ use gl::types::*;
 
 use std::ptr;
 
+#[derive(Clone)]
 pub struct Mesh {
     vao: GLuint,
     vertex_count: i32,
