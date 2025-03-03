@@ -13,7 +13,7 @@ use events::process_events;
 use world::init::App;
 
 fn main() {
-    let mut app = App::new(600, 480, "Multiple Cubes");
+    let mut app = App::new(600, 480, "Minecraft Clone Rust");
 
     unsafe {
         gl::Enable(gl::DEPTH_TEST);
@@ -43,7 +43,6 @@ fn main() {
             gl::UniformMatrix4fv(view_location, 1, gl::FALSE as GLboolean, app.view.as_ptr());
 
             app.world.draw(&app.shader, app.glfw.get_time() as f32);
-            //draw_cubes(&app.mesh, &app.shader, app.glfw.get_time() as f32);
 
             app.window.swap_buffers();
             app.glfw.poll_events();

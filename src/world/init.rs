@@ -13,7 +13,6 @@ pub struct App {
     pub window: PWindow,
     pub events: GlfwReceiver<(f64, WindowEvent)>,
     pub shader: Shader,
-    pub mesh: Mesh,
     pub world: World,
     pub projection: Matrix4<f32>,
     pub view: Matrix4<f32>,
@@ -44,7 +43,6 @@ impl App {
         );
         let cube_vertices: [f32; 108] = Block::get_cube_vertices();
         let mesh = Mesh::new(&cube_vertices);
-        let mesh_clone = mesh.clone();
         let world = World::new(mesh);
 
         let projection: Matrix4<f32> =
@@ -55,13 +53,11 @@ impl App {
             Vector3::new(0.0, 1.0, 0.0),   // Keep same up vector
         );
 
-        // Change the App initialization to:
         App {
             glfw,
-            window: window, // Make sure the types match exactly
+            window,
             events,
             shader,
-            mesh: mesh_clone,
             world,
             projection,
             view,
