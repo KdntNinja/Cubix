@@ -1,9 +1,5 @@
 use crate::config::Config;
-use crate::player::camera::Camera;
-use crate::world::world::World;
-use cgmath::Point3;
-use cgmath::{InnerSpace, Vector3};
-use glfw::{Action, Key, Window};
+use glfw::{Action, Key};
 use std::collections::HashMap;
 
 /// Manages player input, including movement and key states.
@@ -13,7 +9,7 @@ pub struct PlayerInput {
     fly_mode: bool,
     gravity: f32,
     jump_force: f32,
-    velocity: Vector3<f32>,
+    velocity: cgmath::Vector3<f32>,
     on_ground: bool,
     last_jump_time: f32,
     jump_cooldown: f32,
@@ -36,7 +32,7 @@ impl PlayerInput {
             fly_mode: false,
             gravity: config.physics.gravity,
             jump_force: config.physics.jump_force,
-            velocity: Vector3::new(0.0, 0.0, 0.0),
+            velocity: cgmath::Vector3::new(0.0, 0.0, 0.0),
             on_ground: false,
             last_jump_time: 0.0,
             jump_cooldown: 0.2, // Prevent jump spam
