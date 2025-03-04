@@ -234,27 +234,6 @@ impl PlayerInput {
         *self.key_states.get(&key).unwrap_or(&false)
     }
 
-    /// Moves the camera by the given offset.
-    ///
-    /// # Arguments
-    ///
-    /// * `camera` - A mutable reference to the player's camera.
-    /// * `offset` - The offset to move the camera by.
-    fn move_camera(&self, camera: &mut Camera, offset: Vector3<f32>) {
-        // Check for NaN or infinite values in the offset
-        if !offset.x.is_finite() || !offset.y.is_finite() || !offset.z.is_finite() {
-            return; // Reject invalid movements
-        }
-
-        // In non-fly mode, only move horizontally
-        if !self.fly_mode {
-            camera.position.x += offset.x;
-            camera.position.z += offset.z;
-        } else {
-            camera.position += offset;
-        }
-    }
-
     /// Placeholder method for block placement.
     ///
     /// # Returns
