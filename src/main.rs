@@ -59,6 +59,7 @@ fn main() {
                 &mut player_input,
                 delta_time,
                 &config,
+                &app.world, // Pass the world
             );
 
             // Update the view matrix with new camera orientation

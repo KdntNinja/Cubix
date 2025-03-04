@@ -1,5 +1,7 @@
 use crate::config::Config;
 use crate::player::camera::Camera;
+use crate::world::world::World;
+use cgmath::Point3;
 use cgmath::{InnerSpace, Vector3};
 use glfw::{Action, Key, Window};
 use std::collections::HashMap;
@@ -75,21 +77,23 @@ impl PlayerInput {
     /// * `camera` - A mutable reference to the player's camera.
     /// * `delta_time` - The time elapsed since the last frame.
     /// * `config` - A reference to the game configuration.
+    // Add these imports at the top of src/player/input.rs
     pub fn process_input(
         &mut self,
         _window: &Window,
         camera: &mut Camera,
         delta_time: f32,
         config: &Config,
+        world: &World, // New parameter
     ) {
         // Update timers
         self.last_jump_time += delta_time;
 
-        // Set movement speed - higher speed for fly mode
+        // Set movement speed
         let base_speed = if self.is_key_pressed(Key::LeftControl) {
             15.0 // Sprint speed
         } else if self.fly_mode {
-            8.0 // Higher base speed for fly mode
+            8.0 // Fly mode speed
         } else {
             5.0 // Normal walking speed
         };
@@ -98,31 +102,37 @@ impl PlayerInput {
         let speed = base_speed * delta_time;
         self.movement_speed = base_speed;
 
-        // Forward/backward movement (only horizontal component in walking mode)
-        if self.is_key_pressed(Key::W) {
-            let mut movement = camera.front;
-            if !self.fly_mode {
-                movement.y = 0.0; // Remove vertical component in walking mode
-                if movement.magnitude() > 0.0001 {
-                    movement = movement.normalize() * speed;
-                }
-            } else {
-                movement = movement * speed;
-            }
-            self.move_camera(camera, movement);
-        }
+        // Player collision properties
+        let player_radius = 0.3; // Reasonable radius for player
+        let player_height = config.physics.player_height;
 
-        if self.is_key_pressed(Key::S) {
-            let mut movement = -camera.front;
-            if !self.fly_mode {
-                movement.y = 0.0; // Remove vertical component in walking mode
-                if movement.magnitude() > 0.0001 {
-                    movement = movement.normalize() * speed;
-                }
-            } else {
-                movement = movement * speed;
+        // Store current position before movement
+        let current_pos = camera.position;
+        let mut target_pos = current_pos;
+
+        // Ground detection for jumping
+        if !self.fly_mode {
+            // Position is now the camera position (eyes), so we check at feet level
+            let feet_position = Point3::new(
+                camera.position.x,
+                camera.position.y - config.physics.player_height,
+                camera.position.z,
+            );
+
+            // Check if there's a block below feet
+            let ground_check_pos = Point3::new(
+                feet_position.x,
+                feet_position.y - 0.05, // Check slightly below feet
+                feet_position.z,
+            );
+
+            let was_on_ground = self.on_ground;
+            self.on_ground = world.check_collision(&ground_check_pos, player_radius, 0.1);
+
+            // If we just landed, reset vertical velocity
+            if !was_on_ground && self.on_ground {
+                self.velocity.y = 0.0;
             }
-            self.move_camera(camera, movement);
         }
 
         // Left/right movement (strafe)
@@ -133,22 +143,41 @@ impl PlayerInput {
             } else {
                 1.0
             };
-            self.move_camera(camera, right * direction * speed);
+            target_pos += right * direction * speed;
+        }
+
+        // Forward/backward movement
+        if self.is_key_pressed(Key::W) || self.is_key_pressed(Key::S) {
+            // Get horizontal component of camera front vector
+            let mut forward = camera.front;
+            if !self.fly_mode {
+                // When not flying, we move only horizontally
+                forward.y = 0.0;
+                // Only normalize if the vector isn't zero length
+                if forward.magnitude() > 0.00001 {
+                    forward = forward.normalize();
+                }
+            }
+
+            let direction = if self.is_key_pressed(Key::S) {
+                -1.0
+            } else {
+                1.0
+            };
+            target_pos += forward * direction * speed;
         }
 
         // Handle vertical movement based on mode
         if self.fly_mode {
             // Flying controls - direct up/down movement
             if self.is_key_pressed(Key::Space) {
-                self.move_camera(camera, Vector3::new(0.0, speed, 0.0));
+                target_pos.y += speed;
             }
             if self.is_key_pressed(Key::LeftShift) {
-                self.move_camera(camera, Vector3::new(0.0, -speed, 0.0));
+                target_pos.y -= speed;
             }
         } else {
-            // Walking mode with physics
-
-            // Jumping with improved feel
+            // Walking mode with physics and jumping
             if self.is_key_pressed(Key::Space)
                 && self.on_ground
                 && self.last_jump_time > self.jump_cooldown
@@ -158,26 +187,40 @@ impl PlayerInput {
                 self.last_jump_time = 0.0;
             }
 
-            // Apply gravity with delta time scaling
-            self.velocity.y -= self.gravity * delta_time * 60.0; // Scale with target 60fps
+            // Apply gravity
+            self.velocity.y -= self.gravity * delta_time * 60.0;
 
-            // Terminal velocity cap to prevent falling too fast
+            // Terminal velocity cap
             if self.velocity.y < -0.8 {
                 self.velocity.y = -0.8;
             }
 
             // Apply vertical velocity
-            camera.position.y += self.velocity.y;
+            target_pos.y += self.velocity.y;
+        }
 
-            // Ground collision detection
-            if camera.position.y <= config.physics.player_height {
-                camera.position.y = config.physics.player_height;
+        // Resolve collisions with world
+        camera.position =
+            world.resolve_collision(current_pos, target_pos, player_radius, player_height);
+
+        // Ground detection for jumping
+        if !self.fly_mode {
+            // Check if there's a block below us
+            let ground_check_pos = Point3::new(
+                camera.position.x,
+                camera.position.y - 0.05, // Check slightly below feet
+                camera.position.z,
+            );
+
+            let was_on_ground = self.on_ground;
+            self.on_ground = world.check_collision(&ground_check_pos, player_radius, 0.1);
+
+            // If we just landed, reset vertical velocity
+            if !was_on_ground && self.on_ground {
                 self.velocity.y = 0.0;
-                self.on_ground = true;
             }
         }
     }
-
     /// Checks if a key is currently pressed.
     ///
     /// # Arguments
@@ -246,11 +289,12 @@ pub fn handle_movement_input(
     player_input: &mut PlayerInput,
     delta_time: f32,
     config: &Config,
+    world: &World, // New parameter
 ) {
     // Skip input processing if cursor isn't locked (in menus)
     if !config.controls.cursor_locked {
         return;
     }
 
-    player_input.process_input(window, camera, delta_time, config);
+    player_input.process_input(window, camera, delta_time, config, world);
 }
