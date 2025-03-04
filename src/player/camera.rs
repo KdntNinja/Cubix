@@ -1,5 +1,6 @@
 use cgmath::{InnerSpace, Matrix4, Point3, Vector3};
 
+/// Represents the player's camera, including position and orientation.
 pub struct Camera {
     pub position: Point3<f32>,
     pub front: Vector3<f32>,
@@ -9,6 +10,15 @@ pub struct Camera {
 }
 
 impl Camera {
+    /// Creates a new `Camera` at the given position.
+    ///
+    /// # Arguments
+    ///
+    /// * `position` - The initial position of the camera.
+    ///
+    /// # Returns
+    ///
+    /// A new `Camera` instance.
     pub fn new(position: Point3<f32>) -> Self {
         Camera {
             position,
@@ -19,10 +29,23 @@ impl Camera {
         }
     }
 
+    /// Returns the view matrix for the camera.
+    ///
+    /// # Returns
+    ///
+    /// The view matrix.
     pub fn get_view_matrix(&self) -> Matrix4<f32> {
         Matrix4::look_at_rh(self.position, self.position + self.front, self.up)
     }
 
+    /// Processes mouse movement to update the camera's orientation.
+    ///
+    /// # Arguments
+    ///
+    /// * `x_offset` - The horizontal mouse movement.
+    /// * `y_offset` - The vertical mouse movement.
+    /// * `constrain_pitch` - Whether to constrain the pitch to avoid flipping.
+    /// * `sensitivity` - The sensitivity of the mouse movement.
     pub fn process_mouse_movement(
         &mut self,
         x_offset: f32,
@@ -47,6 +70,7 @@ impl Camera {
         self.update_camera_vectors();
     }
 
+    /// Updates the camera's front vector based on its yaw and pitch.
     pub fn update_camera_vectors(&mut self) {
         let front = Vector3::new(
             self.yaw.to_radians().cos() * self.pitch.to_radians().cos(),

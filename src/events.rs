@@ -7,7 +7,7 @@ use glfw::{Action, Glfw, GlfwReceiver, Key, Window, WindowEvent};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
-// Global mutable state wrapped in thread-safe containers
+/// Global mutable state for mouse handling, wrapped in thread-safe containers.
 static MOUSE_STATE: Lazy<Mutex<MouseState>> = Lazy::new(|| {
     Mutex::new(MouseState {
         last_x: 300.0,
@@ -16,12 +16,27 @@ static MOUSE_STATE: Lazy<Mutex<MouseState>> = Lazy::new(|| {
     })
 });
 
+/// Represents the state of the mouse.
 struct MouseState {
     last_x: f32,
     last_y: f32,
     first_mouse: bool,
 }
 
+/// Processes GLFW events and updates the game state accordingly.
+///
+/// # Arguments
+///
+/// * `window` - A mutable reference to the GLFW window.
+/// * `events` - A receiver for GLFW window events.
+/// * `camera` - A mutable reference to the player's camera.
+/// * `config` - A mutable reference to the game configuration.
+/// * `glfw` - A mutable reference to the GLFW instance.
+/// * `player_input` - A mutable reference to the `PlayerInput` instance.
+///
+/// # Returns
+///
+/// An optional new projection matrix if the window size changes.
 pub fn process_events(
     window: &mut Window,
     events: &GlfwReceiver<(f64, WindowEvent)>,

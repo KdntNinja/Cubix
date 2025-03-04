@@ -3,18 +3,20 @@ use std::fs::{self, File};
 pub use std::io::Write;
 use std::path::Path;
 
+/// Represents the game configuration, including window, camera, controls, and physics settings.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    // Window settings
+    /// Window settings
     pub window: WindowConfig,
-    // Camera settings
+    /// Camera settings
     pub camera: CameraConfig,
-    // Controls settings
+    /// Controls settings
     pub controls: ControlsConfig,
-    // Physics settings
+    /// Physics settings
     pub physics: PhysicsConfig,
 }
 
+/// Represents the window configuration.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct WindowConfig {
     pub width: u32,
@@ -24,6 +26,7 @@ pub struct WindowConfig {
     pub vsync: bool,
 }
 
+/// Represents the camera configuration.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CameraConfig {
     pub sensitivity: f32,
@@ -35,11 +38,13 @@ pub struct CameraConfig {
     pub position_z: f32,
 }
 
+/// Represents the controls configuration.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ControlsConfig {
     pub cursor_locked: bool,
 }
 
+/// Represents the physics configuration.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PhysicsConfig {
     pub gravity: f32,
@@ -79,6 +84,11 @@ impl Default for Config {
 }
 
 impl Config {
+    /// Loads the configuration from `config.toml` if it exists, otherwise creates a default configuration.
+    ///
+    /// # Returns
+    ///
+    /// The loaded or default configuration.
     pub fn load() -> Self {
         let config_path = "config.toml";
 
@@ -105,6 +115,7 @@ impl Config {
         config
     }
 
+    /// Saves the configuration to `config.toml`.
     pub fn save(&self) {
         let config_str = toml::to_string_pretty(self).expect("Failed to serialize config");
         let mut file = File::create("config.toml").expect("Failed to create config file");

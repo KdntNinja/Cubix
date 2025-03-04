@@ -1,8 +1,8 @@
 extern crate gl;
 use gl::types::*;
-
 use std::ptr;
 
+/// Represents a 3D mesh with vertex data stored in a Vertex Array Object (VAO).
 #[derive(Clone)]
 pub struct Mesh {
     vao: GLuint,
@@ -10,6 +10,15 @@ pub struct Mesh {
 }
 
 impl Mesh {
+    /// Creates a new `Mesh` from a list of vertices.
+    ///
+    /// # Arguments
+    ///
+    /// * `vertices` - A slice of vertex positions.
+    ///
+    /// # Returns
+    ///
+    /// A new `Mesh` instance.
     pub fn new(vertices: &[f32]) -> Self {
         let mut vao: GLuint = 0;
         let mut vbo: GLuint = 0;
@@ -48,6 +57,7 @@ impl Mesh {
         Mesh { vao, vertex_count }
     }
 
+    /// Draws the mesh using OpenGL.
     pub fn draw(&self) {
         unsafe {
             gl::BindVertexArray(self.vao);

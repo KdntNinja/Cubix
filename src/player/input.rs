@@ -4,6 +4,7 @@ use cgmath::{InnerSpace, Vector3};
 use glfw::{Action, Key, Window};
 use std::collections::HashMap;
 
+/// Manages player input, including movement and key states.
 pub struct PlayerInput {
     key_states: HashMap<Key, bool>,
     movement_speed: f32,
@@ -17,6 +18,15 @@ pub struct PlayerInput {
 }
 
 impl PlayerInput {
+    /// Creates a new `PlayerInput` instance with the given configuration.
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - A reference to the game configuration.
+    ///
+    /// # Returns
+    ///
+    /// A new `PlayerInput` instance.
     pub fn new(config: &Config) -> Self {
         PlayerInput {
             key_states: HashMap::new(),
@@ -31,6 +41,12 @@ impl PlayerInput {
         }
     }
 
+    /// Handles key press and release events.
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - The key that was pressed or released.
+    /// * `action` - The action (press or release) associated with the key.
     pub fn key_callback(&mut self, key: Key, action: Action) {
         match action {
             Action::Press => {
@@ -51,6 +67,14 @@ impl PlayerInput {
         }
     }
 
+    /// Processes player input and updates the camera position.
+    ///
+    /// # Arguments
+    ///
+    /// * `_window` - A reference to the GLFW window.
+    /// * `camera` - A mutable reference to the player's camera.
+    /// * `delta_time` - The time elapsed since the last frame.
+    /// * `config` - A reference to the game configuration.
     pub fn process_input(
         &mut self,
         _window: &Window,
@@ -154,11 +178,25 @@ impl PlayerInput {
         }
     }
 
+    /// Checks if a key is currently pressed.
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - The key to check.
+    ///
+    /// # Returns
+    ///
+    /// `true` if the key is pressed, `false` otherwise.
     fn is_key_pressed(&self, key: Key) -> bool {
         *self.key_states.get(&key).unwrap_or(&false)
     }
 
-    // In move_camera method, check magnitude before applying movement
+    /// Moves the camera by the given offset.
+    ///
+    /// # Arguments
+    ///
+    /// * `camera` - A mutable reference to the player's camera.
+    /// * `offset` - The offset to move the camera by.
     fn move_camera(&self, camera: &mut Camera, offset: Vector3<f32>) {
         // Check for NaN or infinite values in the offset
         if !offset.x.is_finite() || !offset.y.is_finite() || !offset.z.is_finite() {
@@ -174,19 +212,34 @@ impl PlayerInput {
         }
     }
 
-    // Block placement and breaking methods
+    /// Placeholder method for block placement.
+    ///
+    /// # Returns
+    ///
+    /// `false` as block placement is not yet implemented.
     pub fn _place_block(&self) -> bool {
-        // Will be implemented when world editing is added
         false
     }
 
+    /// Placeholder method for block breaking.
+    ///
+    /// # Returns
+    ///
+    /// `false` as block breaking is not yet implemented.
     pub fn _break_block(&self) -> bool {
-        // Will be implemented when world editing is added
         false
     }
 }
 
-// Function to register input handling in the main event loop
+/// Handles player movement input in the main event loop.
+///
+/// # Arguments
+///
+/// * `window` - A reference to the GLFW window.
+/// * `camera` - A mutable reference to the player's camera.
+/// * `player_input` - A mutable reference to the `PlayerInput` instance.
+/// * `delta_time` - The time elapsed since the last frame.
+/// * `config` - A reference to the game configuration.
 pub fn handle_movement_input(
     window: &Window,
     camera: &mut Camera,

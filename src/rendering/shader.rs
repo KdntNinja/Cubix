@@ -3,11 +3,22 @@ extern crate gl;
 use gl::types::*;
 use std::{ffi::CString, fs::File, io::Read, path::Path, ptr, str};
 
+/// Represents an OpenGL shader program.
 pub struct Shader {
     pub id: GLuint,
 }
 
 impl Shader {
+    /// Creates a new `Shader` from vertex and fragment shader source files.
+    ///
+    /// # Arguments
+    ///
+    /// * `vertex_path` - The path to the vertex shader source file.
+    /// * `fragment_path` - The path to the fragment shader source file.
+    ///
+    /// # Returns
+    ///
+    /// A new `Shader` instance.
     pub fn new(vertex_path: &str, fragment_path: &str) -> Self {
         let vertex_code = Shader::read_shader_source(vertex_path);
         let fragment_code = Shader::read_shader_source(fragment_path);
@@ -39,6 +50,16 @@ impl Shader {
         }
     }
 
+    /// Compiles a shader from source code.
+    ///
+    /// # Arguments
+    ///
+    /// * `source` - The shader source code.
+    /// * `shader_type` - The type of shader (e.g., `gl::VERTEX_SHADER`).
+    ///
+    /// # Returns
+    ///
+    /// The compiled shader ID.
     fn compile_shader(src: &str, ty: GLenum) -> GLuint {
         unsafe {
             let shader = gl::CreateShader(ty);
@@ -69,6 +90,16 @@ impl Shader {
         }
     }
 
+    /// Links vertex and fragment shaders into a shader program.
+    ///
+    /// # Arguments
+    ///
+    /// * `vertex_shader` - The compiled vertex shader ID.
+    /// * `fragment_shader` - The compiled fragment shader ID.
+    ///
+    /// # Returns
+    ///
+    /// The linked shader program ID.
     fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
         unsafe {
             let program = gl::CreateProgram();
@@ -99,6 +130,7 @@ impl Shader {
         }
     }
 
+    /// Activates the shader program.
     pub fn use_program(&self) {
         unsafe {
             gl::UseProgram(self.id);

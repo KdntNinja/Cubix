@@ -7,7 +7,14 @@ use crate::rendering::mesh::Mesh;
 use crate::rendering::shader::Shader;
 use crate::world::block::Block;
 
-// Draw chunk data with block edges
+/// Draws a chunk of blocks using the given mesh and shader.
+///
+/// # Arguments
+///
+/// * `chunk_data` - A 3D array representing the chunk data.
+/// * `mesh` - The mesh to use for rendering.
+/// * `shader` - The shader to use for rendering.
+/// * `time` - The current time (used for animations).
 pub fn draw_chunk(chunk_data: &[[[u32; 16]; 16]; 16], mesh: &Mesh, shader: &Shader, _time: f32) {
     // First pass: Draw solid blocks
     draw_solid_blocks(chunk_data, mesh, shader);
@@ -16,7 +23,13 @@ pub fn draw_chunk(chunk_data: &[[[u32; 16]; 16]; 16], mesh: &Mesh, shader: &Shad
     draw_block_edges(chunk_data, mesh, shader);
 }
 
-// Draw the solid blocks
+/// Draw the solid blocks
+///
+/// # Arguments
+///
+/// * `chunk_data` - A 3D array representing the chunk data.
+/// * `mesh` - The mesh to use for rendering.
+/// * `shader` - The shader to use for rendering.
 fn draw_solid_blocks(chunk_data: &[[[u32; 16]; 16]; 16], mesh: &Mesh, shader: &Shader) {
     unsafe {
         for x in 0..16 {
@@ -56,7 +69,13 @@ fn draw_solid_blocks(chunk_data: &[[[u32; 16]; 16]; 16], mesh: &Mesh, shader: &S
     }
 }
 
-// Draw the edges of blocks
+/// Draw the edges of blocks
+///
+/// # Arguments
+///
+/// * `chunk_data` - A 3D array representing the chunk data.
+/// * `mesh` - The mesh to use for rendering.
+/// * `shader` - The shader to use for rendering.
 fn draw_block_edges(chunk_data: &[[[u32; 16]; 16]; 16], mesh: &Mesh, shader: &Shader) {
     unsafe {
         // Save the current polygon mode

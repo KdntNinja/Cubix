@@ -17,6 +17,7 @@ use crate::events::process_events;
 use crate::player::input::{PlayerInput, handle_movement_input};
 use crate::world::init::App;
 
+/// The main entry point of the Cubix application.
 fn main() {
     // Load config
     let mut config = Config::load();
@@ -68,7 +69,7 @@ fn main() {
 
             app.shader.use_program();
 
-            //Set up projection matrix
+            // Set up projection matrix
             let projection_location =
                 gl::GetUniformLocation(app.shader.id, b"projection\0".as_ptr() as *const GLchar);
             gl::UniformMatrix4fv(
@@ -78,7 +79,7 @@ fn main() {
                 app.projection.as_ptr(),
             );
 
-            //Set up view matrix
+            // Set up view matrix
             let view_location =
                 gl::GetUniformLocation(app.shader.id, b"view\0".as_ptr() as *const GLchar);
             gl::UniformMatrix4fv(view_location, 1, gl::FALSE as GLboolean, app.view.as_ptr());

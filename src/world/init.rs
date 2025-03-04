@@ -10,6 +10,7 @@ use crate::world::{block::Block, world::World};
 use cgmath::{Deg, Matrix4, Point3, perspective};
 use glfw::{Context, CursorMode, Glfw, GlfwReceiver, PWindow, WindowEvent};
 
+/// Represents the main application state, including window, camera, shader, and world.
 pub struct App {
     pub glfw: Glfw,
     pub window: PWindow,
@@ -22,6 +23,15 @@ pub struct App {
 }
 
 impl App {
+    /// Creates a new `App` instance with the given configuration.
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - A reference to the game configuration.
+    ///
+    /// # Returns
+    ///
+    /// A new `App` instance.
     pub fn new(config: &Config) -> Self {
         let mut glfw = glfw::init(glfw::fail_on_errors).expect("Failed to initialize GLFW");
 
@@ -105,6 +115,8 @@ impl App {
             camera,
         }
     }
+
+    /// Updates the view matrix based on the current camera orientation.
     pub fn update_view_matrix(&mut self) {
         self.view = self.camera.get_view_matrix();
     }
