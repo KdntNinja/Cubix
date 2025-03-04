@@ -14,7 +14,8 @@ mod world;
 
 use crate::config::Config;
 use crate::events::process_events;
-use crate::player::input::{PlayerInput, handle_movement_input};
+use crate::player::input::PlayerInput;
+use crate::player::movement::handle_movement_input; // Updated import
 use crate::world::init::App;
 
 /// The main entry point of the Cubix application.

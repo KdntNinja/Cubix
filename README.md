@@ -61,7 +61,7 @@ The game configuration is stored in `config.toml` and `src/config.rs`. You can m
 - `src/main.rs`: The main entry point of the application.
 - `src/config.rs`: Configuration management.
 - `src/events.rs`: Event handling.
-- `src/player/`: Player-related functionality (camera and input).
+- `src/player/`: Player-related functionality (camera, input, and movement).
 - `src/rendering/`: Rendering-related functionality (mesh and shader).
 - `src/world/`: World-related functionality.
 
