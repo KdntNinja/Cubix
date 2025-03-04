@@ -1,7 +1,7 @@
 [window]
 width = 1280
 height = 720
-title = "Minecraft Clone Rust"
+title = "Cubix"
 fullscreen = true
 vsync = true
 

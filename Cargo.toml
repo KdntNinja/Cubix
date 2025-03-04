@@ -1,10 +1,10 @@
 [package]
-name = "minecraft_clone_rust"
+name = "cubix"
 version = "0.1.0"
 edition = "2024"
 
 [[bin]]
-name = "minecraft_clone_rust"
+name = "cubix"
 
 [dependencies]
 gl = "0.14.0"

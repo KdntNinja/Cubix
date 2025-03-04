@@ -53,7 +53,7 @@ impl Default for Config {
             window: WindowConfig {
                 width: 1280,
                 height: 720,
-                title: String::from("Minecraft Clone Rust"),
+                title: String::from("Cubix"),
                 fullscreen: true,
                 vsync: true,
             },
