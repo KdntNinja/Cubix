@@ -5,14 +5,14 @@ use std::collections::HashMap;
 /// Manages player input, including movement and key states.
 pub struct PlayerInput {
     key_states: HashMap<Key, bool>,
-    movement_speed: f32,
-    fly_mode: bool,
-    gravity: f32,
-    jump_force: f32,
-    velocity: cgmath::Vector3<f32>,
-    on_ground: bool,
-    last_jump_time: f32,
-    jump_cooldown: f32,
+    pub movement_speed: f32,
+    pub fly_mode: bool,
+    pub gravity: f32,
+    pub jump_force: f32,
+    pub velocity: cgmath::Vector3<f32>,
+    pub on_ground: bool,
+    pub last_jump_time: f32,
+    pub jump_cooldown: f32,
 }
 
 impl PlayerInput {
@@ -74,7 +74,7 @@ impl PlayerInput {
     /// # Returns
     ///
     /// `true` if the key is pressed, `false` otherwise.
-    fn is_key_pressed(&self, key: Key) -> bool {
+    pub fn is_key_pressed(&self, key: Key) -> bool {
         *self.key_states.get(&key).unwrap_or(&false)
     }
 

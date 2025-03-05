@@ -2,9 +2,9 @@ use crate::config::Config;
 use crate::player::camera::Camera;
 use crate::player::input::PlayerInput;
 use crate::world::world::World;
+use cgmath::InnerSpace;
 use cgmath::Point3;
-use cgmath::{InnerSpace, Vector3};
-use glfw::Window;
+use glfw::{Key, Window};
 
 /// Processes player input and updates the camera position.
 ///
